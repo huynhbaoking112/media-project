@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Inline+One:ital@0;1&family=Josefin+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Vina+Sans&display=swap');
+
+/* .modal {
+  width: 200px;
+  height: 300px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+
+
+@keyframes wiggle {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(10px); }  
+    100% { transform: translateY(0); }
+  }
+  
+  .char {
+    display: inline-block;
+    animation: wiggle 1s ease-in-out infinite;
+  }
+  
+  .char:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .char:nth-child(2) {
+    animation-delay: 0.1s;  
+  } 
+  
+  .char:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .char:nth-child(4) {
+    animation-delay: 0.3s;
+  }
+  .char:nth-child(5) {
+    animation-delay: 0.4s;
+  }
+  .char:nth-child(6) {
+    animation-delay: 0.5s;
+  }
+  .char:nth-child(7) {
+    animation-delay: 0.6s;
+  }
+  
+  .char:nth-child(8) {
+    animation-delay: 0.7s;
+  }
+  
+  .char:nth-child(9) {
+    animation-delay: 0.8s;
+  }
+  
+  .char:nth-child(10) {
+    animation-delay: 0.9s;
+  }
+  
+  .char:nth-child(11) {
+    animation-delay: 1s;
+  }
+  
+  .char:nth-child(12) {
+    animation-delay: 1.1s;
+  }
+  
+  .char:nth-child(13) {
+    animation-delay: 1.2s;
+  }
+  
+  .char:nth-child(14) {
+    animation-delay: 1.3s;
+  }
+  
+  .char:nth-child(15) {
+    animation-delay: 1.4s;
+  }
+  
+  .char:nth-child(16) {
+    animation-delay: 1.5s;
+  }
+  
+  .char:nth-child(17) {
+    animation-delay: 1.6s;
+  }
+  
+  .char:nth-child(18) {
+    animation-delay: 1.7s;
+  }
+  
+  .char:nth-child(19) {
+    animation-delay: 1.8s;
+  }
+  
+  .char:nth-child(20) {
+    animation-delay: 1.9s;
+  }
+  
+  .char:nth-child(21) {
+    animation-delay: 2.0s;
+  }
+  
+  .char:nth-child(22) {
+    animation-delay: 2.1s;
+  }
+  
+  .char:nth-child(23) {
+    animation-delay: 2.2s;
+  }
+  
+  
+  .char:nth-child(24) {
+    animation-delay: 2.3s;
+  }
+  
+  
+  .char:nth-child(25) {
+    animation-delay: 2.4s;
+  }
+  
