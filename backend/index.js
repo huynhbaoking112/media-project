@@ -50,7 +50,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet())
-app.use(morgan("common"))
+// app.use(morgan("common"))
 //middleware router
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
@@ -101,20 +101,81 @@ const removeUser=(socketId)=>{
     
 }
 
-const getUser=(userId)=>{
-    return users.find((e)=>userId==e.userId)
+const getUser=(userIds)=>{
+  // const index= users.findIndex((e)=>e.userId==userId)
+  // const socketId=users[index].socketId
+  // return socketId
+  for(let element of users){
+    if(element.userId==userIds){
+      return element.socketId
+    }
+  }
+    
 }
 
 io.on("connection",(socket)=>{
+
+  //may chu bao hieu callVideo
+
+
+  socket.on('callUser',async({userId,friendId})=>{
+        try {
+          
+          const SocketFriendId=getUser(friendId)
+          const userCall=await User.findById(userId)
+           io.to(SocketFriendId).emit('callUser',({userId,username:userCall.username}))
+        } catch (error) {
+          console.log(error);
+        }
+
+  })
+
+  socket.on("CancelCall",(id)=>{
+    const socketid=getUser(id)
+    io.to(socketid).emit("cancel")
+  })
+
+  socket.on('duasignal',(userid)=>{
+    const id=getUser(userid)
+    io.to(id).emit('laysignal')
+  })
+
+
+  socket.on('ne',({signal,userid})=>{
+  
+    const id=getUser(userid)
+    io.to(id).emit('guisignal',signal)
+  })
+
+  socket.on('endedCall',({userCall1,userCall2})=>{
+    const id1=getUser(userCall1)
+    const id2=getUser(userCall2)
+    io.to(id1).to(id2).emit("end")
+  })
+
+
+  socket.on('answerCall',async({signal,userCallId})=>{
+   try {
+    
+    const SocketUserCallId=getUser(userCallId)
+    io.to(SocketUserCallId).emit('acceptCall',signal)
+   } catch (error) {
+    console.log(error);
+   }
+    
+
+  })
+
+
 
     // when connect
     // console.log("A user connected");
 
     //take userId and SocketIo from user
-  socket.on('addUser',async(userId)=>{
+  socket.on('addUser',(userId)=>{
     try {
+      
       addUser(userId,socket.id)
-      const user=await User.findById(userId)
       io.emit("getUsers",users)
     } catch (error) {
       console.log(error);
@@ -126,7 +187,9 @@ io.on("connection",(socket)=>{
 
   //when sendMesse
   socket.on('sendMess',({sendUser,receiverId,text})=>{
-    io.to(getUser(receiverId).socketId).emit('getMess',{
+  
+    const id=getUser(receiverId)
+    io.to(id).emit('getMess',{
         sendUser,
         receiverId,
         text

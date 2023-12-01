@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import anh from "../asset/user2.jpg";
-import anh3 from "../asset/like.png";
-import anh4 from "../asset/heart.png";
 import axios from "axios";
 
 import { format } from "timeago.js";
@@ -14,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import Comment from "./Comment";
-import AllComment from "./AllComment";
 import { FaComments } from "react-icons/fa";
 import { FaShare } from "react-icons/fa";
 import Modal from "react-modal";

@@ -46,8 +46,6 @@ const HandleDeleteUser=async(req,res,next)=>{
 }
 
 const HandleGetUser=async(req,res,next)=>{
-    console.log(req.query.username);
-    console.log(req.query.userId);
 
     const username=req.query.username
     const userId=req.query.userId

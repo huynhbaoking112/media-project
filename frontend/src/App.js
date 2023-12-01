@@ -13,6 +13,8 @@ import Search from "./components/Search.jsx"
 import PostPage from "./pages/PostPage.jsx";
 import Error from "./pages/Error.jsx";
 import Messenger from "./pages/Messenger.jsx";
+import UserCall from "./pages/UserCall.jsx";
+import ReplyCall from "./pages/ReplyCall.jsx";
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -49,6 +51,8 @@ function App() {
           }
         />
 
+        
+
         <Route
           path="/register"
           element={
@@ -61,6 +65,8 @@ function App() {
             )
           }
         />
+
+
 
         <Route
           path="/userprofile/:userId"
@@ -80,6 +86,34 @@ function App() {
             )
           }
         />
+
+<Route
+          path="/callUser/:userid"
+          element={
+            Object.keys(user).length != 0 ? (
+              <div className="h-screen w-full">
+                  <UserCall/>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/replyCall/:userid"
+          element={
+            Object.keys(user).length != 0 ? (
+              <div className="h-screen w-full">
+                  <ReplyCall/>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        
+
+
          <Route
           path="/post/:postid"
           element={
