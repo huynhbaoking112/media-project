@@ -10,6 +10,10 @@ import FriendOnline from "../components/FriendOnline";
 import { FaVideo } from "react-icons/fa";
 import { IoCall } from "react-icons/io5";
 import Modal from "react-modal";
+import { LuPhoneCall } from "react-icons/lu";
+import { FcEndCall } from "react-icons/fc";
+import { FcVideoCall } from "react-icons/fc";
+
 
 
 
@@ -202,28 +206,28 @@ const Messenger = () => {
   return (
     <div className="h-screen relative w-full flex bg-[#242526] text-white">
      <Modal
-                className=" absolute top-[50%] outline-none left-[50%] bottom-[50%] right-[50%] rounded-xl  w-[400px] h-[300px]  translate-x-[-50%] translate-y-[-50%]"
+                className=" absolute top-[50%] outline-none left-[50%] bottom-[50%] right-[50%] rounded-xl  w-[400px] h-[300px]  translate-x-[-50%] translate-y-[-50%] bg-slate-800"
                 isOpen={called}
                 onRequestClose={closeModal}
               >
-                <div className="flex flex-col justify-center h-full w-full gap-5 rounded-xl px-3 border-[2px] bg-slate-50 shadow-lg shadow-gray-600">
+                <div className="flex flex-col justify-center h-full w-full gap-5 rounded-xl px-3 border-[2px] bg-gray-200 shadow-lg shadow-gray-600">
                   <div className="flex justify-center items-center gap-2 text-black">
-                    <p className="font-semibold bg-gradient-to-r from-[#00bf8f] to-[#001510] bg-clip-text text-transparent">
-                      Bạn có cuộc gọi đến từ {inforUserCall?.username}
+                    <p className="font-semibold bg-gradient-to-r from-[#00bf8f] to-[#001510] bg-clip-text text-transparent flex items-center gap-2 justify-center">
+                      Bạn có cuộc gọi đến từ {inforUserCall?.username} <span className="text-green-600"><LuPhoneCall size={23}/></span>
                     </p>
                   </div>
                   <div className="flex justify-between ">
                     <button
                       onClick={handleYes}
-                      className="w-[40%] py-1 rounded-lg border-[1px] bg-gradient-to-r from-[#c2e59c] to-[#64b3f4] hover:text-[20px] text-white hover:cursor-pointer hover:scale-110 duration-300 hover:bg-gradient-to-r  hover:from-[#64b3f4] hover:to-[#c2e59c]"
+                      className="w-[40%] py-1 rounded-lg border-[1px] bg-gradient-to-r from-[#c2e59c] to-[#64b3f4] hover:text-[20px] text-white hover:cursor-pointer hover:scale-110 duration-300 hover:bg-gradient-to-r  hover:from-[#64b3f4] hover:to-[#c2e59c] flex justify-center items-center gap-2"
                     >
-                      Chấp nhận 
+                      Chấp nhận <span><FcVideoCall size={23}/></span>
                     </button>
                     <button
                       onClick={handleNo}
-                      className="w-[40%] py-1 rounded-lg border-[1px] bg-gradient-to-r from-[#16BFFD] to-[#CB3066] hover:text-[20px] text-white hover:cursor-pointer hover:scale-110 duration-300 hover:bg-gradient-to-r  hover:from-[#CB3066] hover:to-[#16BFFD]"
+                      className="w-[40%] py-1 rounded-lg border-[1px] bg-gradient-to-r from-[#16BFFD] to-[#CB3066] hover:text-[20px] text-white hover:cursor-pointer hover:scale-110 duration-300 hover:bg-gradient-to-r  hover:from-[#CB3066] hover:to-[#16BFFD] flex justify-center items-center gap-2"
                     >
-                      Từ chối
+                      Từ chối <span><FcEndCall size={23}/></span>
                     </button>
                   </div>
                 </div>

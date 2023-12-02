@@ -9,6 +9,9 @@ import ChatTag from "./ChatTag";
 import { io } from "socket.io-client";
 import EmojiPicker from "emoji-picker-react";
 import { Link } from "react-router-dom";
+import { FaVideo } from "react-icons/fa";
+
+
 
 const ChatInHome = ({ userId ,UnUserClick}) => {
   const [openEmoji, setOpenEmoju] = useState(false);
@@ -108,8 +111,14 @@ const ChatInHome = ({ userId ,UnUserClick}) => {
         />
       </Link>
         <p className="text-white font-medium">{user?.username}</p>
-        <div className="ml-auto mr-[15px] text-gray-300 hover:cursor-pointer hover:scale-110 duration-300 hover:text-white">
-          <IoIosCloseCircleOutline size={25} onClick={()=>{UnUserClick()}} />
+       
+        <div className=" flex justify-center items-center gap-2 ml-auto mr-[15px] text-gray-300 ">
+        <div className="flex items-center hover:cursor-pointer hover:scale-110 duration-300 hover:text-white  " >
+        <Link to={"/callUser/"+userId} >
+          <FaVideo size={23} />
+        </Link>
+        </div>
+          <IoIosCloseCircleOutline size={25} onClick={()=>{UnUserClick()}} className="hover:cursor-pointer hover:scale-110 duration-300 hover:text-white" />
         </div>
       </div>
       <hr />
