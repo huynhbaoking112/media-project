@@ -120,7 +120,7 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
       <div className="flex items-center ">
         <Link to={"/userprofile/" + userId}>
           <img
-            src={user?.coverPicture === "" ? anh : user?.coverPicture}
+            src={user?.profilePicture === "" ? anh : user?.profilePicture}
             className="object-cover rounded-full w-[50px] h-[50px]"
           />
         </Link>

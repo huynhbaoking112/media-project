@@ -59,7 +59,7 @@ const Share = ({ img, userId }) => {
         <div>
           <Link to={"/userprofile/" + userId}>
             <img
-              src={img ? img : anh}
+              src={user?.profilePicture ? user?.profilePicture : anh}
               className="w-[52px] h-[52px] rounded-full object-cover"
             />
           </Link>

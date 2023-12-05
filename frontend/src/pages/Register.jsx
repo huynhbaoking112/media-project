@@ -29,7 +29,6 @@ const Register = () => {
             dispatch(login(res.data.user))
             navigate("/")
         } catch (error) {
-            console.log(error);
             toast.error(error.message, {
                 position: toast.POSITION.TOP_RIGHT,
               });

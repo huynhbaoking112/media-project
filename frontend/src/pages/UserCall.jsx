@@ -15,12 +15,14 @@ const UserCall = () => {
     const [stream,setStream]=useState(null)
     const {userid}=useParams()
     const navigate=useNavigate()
-
+    
     const signal=useRef()
     const currentCamera=useRef()
     const friendCamera=useRef()
     const [callSuccess,setCallSuccess]=useState(false)
-    
+  
+
+
   useEffect(()=>{
     navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
           
@@ -43,7 +45,7 @@ const UserCall = () => {
       friendCamera.current=undefined 
       currentCamera.current=undefined
     })
-    
+   
   },[])
 
     useEffect(()=>{
@@ -84,13 +86,14 @@ const UserCall = () => {
       socket.emit('endedCall',({userCall1:userid,userCall2:user._id}))
     }
 
+
   return (
  <div className='relative h-full w-full bg-black'>
             <div className='w-full h-full relative'>
             <video ref={currentCamera} className='h-screen w-full '  playsInline autoPlay  />
             {/* setphanvideofriend */}
             {callSuccess&&<div className='absolute top-1 left-1' >
-             <video ref={friendCamera} className='rounded-md h-[200px] w-[260px] ' autoPlay  playsInline  />
+             <video ref={friendCamera} className='rounded-md h-[200px] w-[260px] ' autoPlay  playsInline    />
             </div>}
 
             {/* setphantinhnang */}
@@ -101,8 +104,8 @@ const UserCall = () => {
                     <FaCamera size={40} className='z-[10] text-white '/>
               </div> */}
               {/* micro */}
-              {/* <div className='p-3 bg-gray-600 hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full '>
-                    <FaMicrophone size={40} className='z-[10] text-white '/>
+              {/* <div className='p-3 bg-gray-600 hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full ' onClick={HandleOnOffMic}>
+                   {mic?<FaMicrophone size={40} className='z-[10] text-white '/>:<FaMicrophone size={40} className='z-[10] text-red-500 '/>}
               </div> */}
               {/* dungcuocgoi */}
               <div onClick={HandleEndCall} className='p-3 bg-gray-600  hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full '>

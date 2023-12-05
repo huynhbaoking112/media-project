@@ -15,6 +15,7 @@ import Error from "./pages/Error.jsx";
 import Messenger from "./pages/Messenger.jsx";
 import UserCall from "./pages/UserCall.jsx";
 import ReplyCall from "./pages/ReplyCall.jsx";
+import Setting from "./pages/Setting.jsx";
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -78,6 +79,23 @@ function App() {
                   <div className="flex w-full">
                     <Sidebar />
                     <Profile />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/setting"
+          element={
+            Object.keys(user).length != 0 ? (
+              <div>
+                <Navbar />
+                <div className="flex w-full mt-[60px]">
+                  <div className="flex w-full">
+                      <Setting/>
                   </div>
                 </div>
               </div>

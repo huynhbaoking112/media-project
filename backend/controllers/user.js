@@ -3,20 +3,16 @@ const bcrypt=require("bcrypt")
 
 const HandleUpdateUser=async(req,res,next)=>{
     try {
-        const {id}=req.params
-        if(id==req.body._id||req.body.isAdmin){
-            if(req.body.password){
-                const newpassword=await bcrypt.hash(req.body.password,10)
-                req.body.password=newpassword
+        const  {id}=req.params
+           if(req.body.img){
+                req.body.profilePicture=req.body.img
             }
             const user=await User.findByIdAndUpdate(id,req.body,{new:true})
             res.status(200).json({
                 status:"Success",
                 user
             })
-        }else{
-            throw new Error("You cannot do this")
-        }
+     
 
     } catch (error) {
         res.status(404).json({

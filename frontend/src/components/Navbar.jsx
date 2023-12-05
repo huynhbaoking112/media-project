@@ -31,6 +31,10 @@ const Navbar = () => {
     navigate("/top?q="+searchValue)
     setSearchValue("")
   }
+  const HandleSetting=()=>{
+    navigate("/setting")
+    setOpenMenu(false)
+  }
 
   return (
     <div className="bg-blue-500 h-[60px] flex items-center justify-between px-4 fixed top-0 w-full  z-50 ">
@@ -88,7 +92,7 @@ const Navbar = () => {
           {openMenu&&<div className="absolute bg-gray-500 rounded-lg py-2  px-3 text-gray-200  right-0" >
                 <p className="hover:text-white hover:scale-105 duration-300 hover:cursor-pointer" onClick={HandleLogOut} >Logout</p>
                 <p className="hover:text-white hover:scale-105 duration-300 hover:cursor-pointer" onClick={HandleProfile} >YourProfile</p>
-                <p className="hover:text-white hover:scale-105 duration-300 hover:cursor-pointer">Setting</p>
+                <p className="hover:text-white hover:scale-105 duration-300 hover:cursor-pointer" onClick={HandleSetting}>Setting</p>
           </div>}
         </div>
       </div>

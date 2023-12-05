@@ -112,14 +112,14 @@ const Profile = () => {
         <img
           className="object-cover w-full h-[150px]"
           src={
-            user?.profilePicture != ""
-              ? user?.profilePicture
+            user?.coverPicture != ""
+              ? user?.coverPicture
               : "https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2FsbCUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D"
           }
         />
         <div>
           <img
-            src={user?.coverPicture != "" ? user?.coverPicture : anh}
+            src={user?.profilePicture != "" ? user?.profilePicture : anh}
             className="w-[140px] h-[140px] object-cover rounded-full absolute bottom-[-50%] left-[43%]  "
           />
         </div>

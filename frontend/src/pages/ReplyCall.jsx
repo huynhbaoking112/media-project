@@ -10,12 +10,14 @@ import { useSelector } from "react-redux";
 const socket = io("ws://localhost:8000");
 
 const ReplyCall = () => {
+
     const [callSuccess,setCallSuccess]=useState(false)
   const user = useSelector((state) => state.auth.user);
   const [stream, setStream] = useState();
   const { userid } = useParams();
   const navigate = useNavigate();
   const [signalCall, setSignalCall] = useState(null);
+ 
 
   const currentCamera = useRef();
   const friendCamera = useRef();
@@ -37,6 +39,8 @@ const ReplyCall = () => {
         friendCamera.current = undefined;
         currentCamera.current=undefined
       });
+      
+
   }, []);
 
   useEffect(() => {
@@ -65,6 +69,8 @@ const ReplyCall = () => {
     socket.emit("endedCall", { userCall1: userid, userCall2: user._id });
   };
 
+
+
   return (
     <div className="relative h-full w-full bg-black">
       <div className="w-full h-full relative">
@@ -76,6 +82,7 @@ const ReplyCall = () => {
             className="rounded-md h-[200px] w-[260px] "
             autoPlay
             playsInline
+         
           />
         </div>}
 
@@ -87,8 +94,8 @@ const ReplyCall = () => {
                     <FaCamera size={40} className='z-[10] text-white '/>
               </div> */}
               {/* micro */}
-              {/* <div className='p-3 bg-gray-600 hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full '>
-                    <FaMicrophone size={40} className='z-[10] text-white '/>
+              {/* <div className='p-3 bg-gray-600 hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full ' onClick={HandleOnOffMic}>
+                   {mic?<FaMicrophone size={40} className='z-[10] text-white '/>:<FaMicrophone size={40} className='z-[10] text-red-500 '/>}
               </div> */}
               {/* dungcuocgoi */}
               <div onClick={HandleEndCall} className='p-3 bg-gray-600  hover:opacity-100 hover:cursor-pointer opacity-60 flex justify-center items-center rounded-full '>

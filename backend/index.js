@@ -50,7 +50,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet())
-// app.use(morgan("common"))
+app.use(morgan("common"))
 //middleware router
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
@@ -72,13 +72,12 @@ const server=app.listen(8000,()=>{
 
 
 
+
+
+
+
 //web socket
-
 const User=require("./models/User")
-
-
-
-
 
 
 const io=require("socket.io")(server,{
@@ -87,6 +86,7 @@ const io=require("socket.io")(server,{
   }
 })
 let users=[]
+
 
 const addUser=(userId,socketId)=>{
     const a=users.findIndex((e)=>e.userId==userId)
@@ -116,6 +116,19 @@ const getUser=(userIds)=>{
 io.on("connection",(socket)=>{
 
   //may chu bao hieu callVideo
+  //--------tatvamommic--------------
+  // socket.on("tatmickia",(userid)=>{
+  //   const socketid=getUser(userid)
+  //   io.to(socketid).emit("yeucautatmicban")
+  // })
+
+  // socket.on('batmickia',(userid)=>{
+  //   const socketid=getUser(userid)
+  //   io.to(socketid).emit("yeucaubatmicban")
+  // })
+
+
+  //-----tatvamomic-----------------
 
 
   socket.on('callUser',async({userId,friendId})=>{
