@@ -26,8 +26,9 @@ const Register = () => {
                 email:email,
                 password:password
             })
-            dispatch(login(res.data.user))
-            navigate("/")
+            // dispatch(login(res.data.user))
+
+            navigate("/verify/"+res.data.userId)
         } catch (error) {
             toast.error(error.message, {
                 position: toast.POSITION.TOP_RIGHT,

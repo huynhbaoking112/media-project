@@ -16,6 +16,7 @@ import Messenger from "./pages/Messenger.jsx";
 import UserCall from "./pages/UserCall.jsx";
 import ReplyCall from "./pages/ReplyCall.jsx";
 import Setting from "./pages/Setting.jsx";
+import VerifyPage from "./pages/VerifyPage.jsx";
 
 function App() {
   const user = useSelector((state) => state.auth.user);
@@ -51,6 +52,19 @@ function App() {
             )
           }
         />
+        <Route
+          path="/verify/:id"
+          element={
+            Object.keys(user).length != 0 ? (
+              <Navigate to="/" />
+            ) : (
+              <div>
+                <VerifyPage />
+              </div>
+            )
+          }
+        />
+
 
         
 

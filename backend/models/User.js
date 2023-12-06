@@ -75,16 +75,25 @@ const UserSchema=new mongoose.Schema({
                 }
             }],
             default:[]
-        }
+        },
+        verify:{
+            type:Boolean,
+            default :false,
+        },
+        codeverify:{
+            type:Number
+        },timecode:{
+            type:Date,
+            default:Date.now()
+        },
 
 },{timestamps:true})
 
 UserSchema.statics.findOneConfig=async function({email,password}){
-
     const user=await User.findOne({email})
     if(!user || !password ||!email) throw new Error("Invalid email or password")
-    const isMatch=await bcrypt.compare(password,user.password)
-    if(!isMatch) throw new Error("Invalid email or password")
+const isMatch=await bcrypt.compare(password,user.password)
+if(!isMatch) throw new Error("Invalid email or password")
     return user
 }
 

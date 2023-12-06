@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [xacMinh, setXacMinh] = useState(false);
   const dispatch=useDispatch()
   const navigate=useNavigate()
 
@@ -23,16 +23,36 @@ const Login = () => {
         email: email,
         password: password,
       });
+
       toast.success("Login success!", { position: toast.POSITION.TOP_RIGHT });
       dispatch(login(res.data.user))
       navigate("/")
     } catch (error) {
- 
+      if(error.response.data.message=='cdxm'){
+        
+        setXacMinh(true)
+        return  toast.error("Tài khoản chưa được xác minh!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
       toast.error("Email or password is incorrect!", {
         position: toast.POSITION.TOP_RIGHT,
       });
     }
   };
+
+  const HandleVerify=async()=>{
+      try {
+        const res=await axios.post("http://localhost:8000/api/auth/getIdAccount",{
+          email
+        })
+        navigate("/verify/"+res.data.id)
+      } catch (error) {
+        toast.error("Email không tồn tại!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+  }
 
   return (
     <div
@@ -85,7 +105,7 @@ const Login = () => {
               LOGIN
             </button>
           </form>
-          <p className="text-blue-500">Forgot Passoword?</p>
+         {xacMinh&&<p className="text-blue-500 hover:cursor-pointer" onClick={HandleVerify} >Verify Account</p>}
         
             <p className="w-[50%] flex justify-center items-center hover:cursor-pointer rounded-lg bg-green-500 text-white py-2 font-medium hover:scale-110 duration-300">
             <Link to="/register">Create a New Account  </Link>
