@@ -50,7 +50,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet())
-app.use(morgan("common"))
+// app.use(morgan("common"))
 //middleware router
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
@@ -78,63 +78,71 @@ const server=app.listen(8000,()=>{
 
 //web socket
 const User=require("./models/User")
-
+const SocketInfo=require("./models/Socket")
 
 const io=require("socket.io")(server,{
   cors:{
       origin:"http://localhost:3000"
   }
 })
-let users=[]
+// let users=[]
 
 
-const addUser=(userId,socketId)=>{
-    const a=users.findIndex((e)=>e.userId==userId)
-    if(a==-1){
-        users.push({userId,socketId})
+const addUser=async(userId,socketId)=>{
+  try {
+    // const a=users.findIndex((e)=>e.userId==userId)
+    // if(a==-1){
+    //     users.push({userId,socketId})
+    // }else{
+    //     users[a].socketId=socketId
+    // }
+    const user=await SocketInfo.findOne({userId})
+    console.log(user);
+    if(!user){
+      await SocketInfo.create({userId,socketId})
     }else{
-        users[a].socketId=socketId
+      user.socketId=socketId,
+      await user.save()
     }
+
+  } catch (error) {
+    console.log(error);
+  }
 }
-const removeUser=(socketId)=>{
-     users=users.filter((e)=>e.socketId!=socketId)
+const removeUser=async(socketId)=>{
+    //  users=users.filter((e)=>e.socketId!=socketId)
+  try {
+    await SocketInfo.findOneAndDelete({socketId})
+  } catch (error) {
+    console.log(error);
+  }
+   
     
 }
 
-const getUser=(userIds)=>{
-  // const index= users.findIndex((e)=>e.userId==userId)
-  // const socketId=users[index].socketId
-  // return socketId
-  for(let element of users){
-    if(element.userId==userIds){
-      return element.socketId
+const getUser=async(userId)=>{
+  // for(let element of users){
+  //   if(element.userId==userIds){
+  //     return element.socketId
+  //   }
+  // }
+    try {
+      const user=await SocketInfo.findOne({userId})
+      return user.socketId
+    } catch (error) {
+      console.log(error);
     }
-  }
-    
 }
 
 io.on("connection",(socket)=>{
 
-  //may chu bao hieu callVideo
-  //--------tatvamommic--------------
-  // socket.on("tatmickia",(userid)=>{
-  //   const socketid=getUser(userid)
-  //   io.to(socketid).emit("yeucautatmicban")
-  // })
-
-  // socket.on('batmickia',(userid)=>{
-  //   const socketid=getUser(userid)
-  //   io.to(socketid).emit("yeucaubatmicban")
-  // })
-
-
-  //-----tatvamomic-----------------
-
 
   socket.on('callUser',async({userId,friendId})=>{
-        try {
-          
-          const SocketFriendId=getUser(friendId)
+        try {   
+          const SocketFriendId=await getUser(friendId)
+          console.log("----------");
+          console.log(SocketFriendId);
+          console.log("----------");
           const userCall=await User.findById(userId)
            io.to(SocketFriendId).emit('callUser',({userId,username:userCall.username}))
         } catch (error) {
@@ -143,36 +151,40 @@ io.on("connection",(socket)=>{
 
   })
 
-  socket.on("CancelCall",(id)=>{
-    const socketid=getUser(id)
+  socket.on("CancelCall",async(id)=>{
+    const socketid= await getUser(id)
     io.to(socketid).emit("cancel")
   })
 
-  socket.on('duasignal',(userid)=>{
-    const id=getUser(userid)
+  socket.on('duasignal', async(userid)=>{
+    console.log("duasignal");
+    const id=await getUser(userid)
     io.to(id).emit('laysignal')
   })
 
 
-  socket.on('ne',({signal,userid})=>{
-  
-    const id=getUser(userid)
+  socket.on('ne',async({signal,userid})=>{
+    console.log("ne");
+    const id= await getUser(userid)
     io.to(id).emit('guisignal',signal)
   })
 
-  socket.on('endedCall',({userCall1,userCall2})=>{
-    const id1=getUser(userCall1)
-    const id2=getUser(userCall2)
+  socket.on('endedCall',async({userCall1,userCall2})=>{
+    console.log("end");
+    const id1=await getUser(userCall1)
+    const id2= await getUser(userCall2)
     io.to(id1).to(id2).emit("end")
   })
 
 
   socket.on('answerCall',async({signal,userCallId})=>{
    try {
-    
-    const SocketUserCallId=getUser(userCallId)
+     console.log("chapnhan");
+     const SocketUserCallId= await getUser(userCallId)
+     console.log(SocketUserCallId);
     io.to(SocketUserCallId).emit('acceptCall',signal)
    } catch (error) {
+    console.log("loi tai day");
     console.log(error);
    }
     
@@ -185,10 +197,11 @@ io.on("connection",(socket)=>{
     // console.log("A user connected");
 
     //take userId and SocketIo from user
-  socket.on('addUser',(userId)=>{
+  socket.on('addUser',async(userId)=>{
     try {
-      
-      addUser(userId,socket.id)
+      await addUser(userId,socket.id)
+      const users=await SocketInfo.find()
+      console.log(users);
       io.emit("getUsers",users)
     } catch (error) {
       console.log(error);
@@ -199,9 +212,9 @@ io.on("connection",(socket)=>{
 
 
   //when sendMesse
-  socket.on('sendMess',({sendUser,receiverId,text})=>{
+  socket.on('sendMess',async({sendUser,receiverId,text})=>{
   
-    const id=getUser(receiverId)
+    const id=await getUser(receiverId)
     io.to(id).emit('getMess',{
         sendUser,
         receiverId,
@@ -214,7 +227,8 @@ io.on("connection",(socket)=>{
   socket.on('disconnect',async()=>{
      try {
       console.log("A user disconnect");
-      removeUser(socket.id)
+      await removeUser(socket.id)
+      const users=await SocketInfo.find()
       io.emit("getUsers",users)
      } catch (error) {
       console.log(error);

@@ -25,44 +25,59 @@ const ReplyCall = () => {
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-          setStream(stream);
-        // stream.current=stream
-          currentCamera.current.srcObject = stream;
+      // setStream(stream);
+      // stream.current=stream
+      currentCamera.current.srcObject = stream;
+      socket.emit("addUser", user._id);
+      socket.on("guisignal", (signal) => {
+        // setSignalCall(signal);
+        const peer = new Peer({ initiator: false, trickle: false, stream });
+        
+        peer.on("signal", (data) => {
+          
+          socket.emit("answerCall", { signal: data, userCallId: userid });
         });
-    socket.emit("addUser", user._id);
-    socket.emit("duasignal", userid);
-    socket.on("guisignal", (signal) => {
-      setSignalCall(signal);
-    });
-    socket.on("end", () => {
+        
+        peer.on("stream", (stream) => {
+          
+          friendCamera.current.srcObject = stream;
+        });
+        
+        peer.signal(signal)
+        setCallSuccess(true)
+      });
+      socket.on("end", () => {
         navigate("/");
         friendCamera.current = undefined;
         currentCamera.current=undefined
       });
       
-
+      socket.emit("duasignal", userid);
+      
+    });
+   
   }, []);
 
-  useEffect(() => {
-    if (signalCall ) {
+  // useEffect(() => {
+  //   if (signalCall ) {
    
-      const peer = new Peer({ initiator: false, trickle: false, stream });
+  //     const peer = new Peer({ initiator: false, trickle: false, stream });
 
-      peer.on("signal", (data) => {
+  //     peer.on("signal", (data) => {
    
-        socket.emit("answerCall", { signal: data, userCallId: userid });
-      });
+  //       socket.emit("answerCall", { signal: data, userCallId: userid });
+  //     });
 
-      peer.on("stream", (stream) => {
+  //     peer.on("stream", (stream) => {
       
-        friendCamera.current.srcObject = stream;
-      });
+  //       friendCamera.current.srcObject = stream;
+  //     });
 
-      peer.signal(signalCall)
-      setCallSuccess(true)
+  //     peer.signal(signalCall)
+  //     setCallSuccess(true)
    
-    }
-  }, [stream]);
+  //   }
+  // }, [stream]);
 
 
   const HandleEndCall = () => {
