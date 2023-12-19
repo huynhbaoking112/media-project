@@ -6,7 +6,6 @@ import { HiPaperAirplane } from "react-icons/hi";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import ChatTag from "./ChatTag";
-import { io } from "socket.io-client";
 import EmojiPicker from "emoji-picker-react";
 import { Link } from "react-router-dom";
 import { FaVideo } from "react-icons/fa";
@@ -16,7 +15,7 @@ import { FaVideo } from "react-icons/fa";
 const ChatInHome = ({ userId ,UnUserClick}) => {
   const [openEmoji, setOpenEmoju] = useState(false);
   const currentChat = useRef();
-  const socket = useRef();
+  const socket =useSelector((state)=>state.auth.socket);
   const currentUser = useSelector((state) => state.auth.user);
   const [user, setUser] = useState();
   const [allChat, setAllChat] = useState();
@@ -61,18 +60,19 @@ const ChatInHome = ({ userId ,UnUserClick}) => {
   }, [allChat]);
 
   useEffect(() => {
-    socket.current = io("ws://localhost:8000");
-    socket.current.emit("addUser", currentUser._id);
-    socket.current.on("getMess", (Mess) => {
-      console.log("king");
-      setArrivalMess({
-        conversationId: currentConversation,
-        createdAt: Date.now(),
-        sender: Mess.sendUser,
-        text: Mess.text,
+    if(Object.keys(socket).length!=0){
+      socket.emit("addUser", currentUser._id);
+      socket.on("getMess", (Mess) => {
+        console.log("king");
+        setArrivalMess({
+          conversationId: currentConversation,
+          createdAt: Date.now(),
+          sender: Mess.sendUser,
+          text: Mess.text,
+        });
       });
-    });
-  }, []);
+    }
+  }, [socket]);
 
   useEffect(() => {
     arrivalMess && setAllChat([...allChat, arrivalMess]);
@@ -90,7 +90,7 @@ const ChatInHome = ({ userId ,UnUserClick}) => {
       });
       setAllChat([...allChat, res.data.message]);
       setContent("");
-      socket.current.emit("sendMess", {
+      socket.emit("sendMess", {
         sendUser: currentUser._id,
         receiverId: user._id,
         text: content,

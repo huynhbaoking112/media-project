@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
@@ -9,10 +9,15 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../StoreState/userSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const Navbar = () => {
+  const socket=useSelector((state)=>state.auth.socket)
   const user = useSelector((state) => state.auth.user);
   const [searchValue,setSearchValue]=useState("")
   const [openMenu, setOpenMenu] = useState(false);
+  const [newNoti,setNewNoti]=useState(user?.newNotification)
+  const [openNoti,setOpenNoti]=useState(false)
+  const [allNoti,setAllNoti]=useState([])
   const dispatch=useDispatch()
   const navigate=useNavigate()
   const HandleLogOut=()=>{
@@ -35,6 +40,31 @@ const Navbar = () => {
     navigate("/setting")
     setOpenMenu(false)
   }
+
+  const HandleNoti=async()=>{
+    setNewNoti(false)
+    setOpenNoti(!openNoti)
+
+    socket.emit("daxem")
+
+    const res=await axios.get("http://localhost:8000/api/notification/"+user._id)
+    
+   
+    setAllNoti(res.data.notificationAll)
+
+
+  }
+
+  useEffect(()=>{
+    console.log(socket);
+    if(Object.keys(socket).length!=0){
+      socket.on('newToast',()=>{
+        console.log("king");
+        setNewNoti(true)
+      })
+    }
+  },[socket])
+
 
   return (
     <div className="bg-blue-500 h-[60px] flex items-center justify-between px-4 fixed top-0 w-full  z-50 ">
@@ -63,7 +93,7 @@ const Navbar = () => {
       <div className="flex items-center gap-[20px]">
         <div className="relative">
           <PersonIcon className="text-white hover:cursor-pointer" />
-          <div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
+         <div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
             <span className="text-white">1</span>
           </div>
         </div>
@@ -75,11 +105,25 @@ const Navbar = () => {
             <span className="text-white">1</span>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative" onClick={HandleNoti} >
           <NotificationsActiveIcon className="text-white hover:cursor-pointer" />
-          <div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
+          {newNoti&&<div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
             <span className="text-white">1</span>
-          </div>
+          </div>}
+          { openNoti&&<div className="flex flex-col bg-slate-100 border-[1px] border-black w-[350px] absolute top-7 right-0 h-[300px]" >
+              <div className="h-full w-full overflow-y-auto flex flex-col gap-2" >
+
+            {allNoti.map((e)=>{
+              return   <Link key={e._id} to={e.linkBlog}>
+              <div className="flex border-y-[1px] hover:scale-105 duration-300  text-black justify-center items-center h-[50px] border-neutral-500" >
+                        {e.message}
+              </div>
+              </Link>
+            })}
+              
+
+              </div>
+          </div>}
         </div>
 
         <div className="w-[32px] h-[32px] ml-[40px] relative">

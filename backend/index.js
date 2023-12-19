@@ -38,7 +38,7 @@ const postRouter=require("./routes/post")
 const commentRouter=require("./routes/comment")
 const ConversationRouter=require("./routes/conversations")
 const MessageRouter=require("./routes/messages")
-
+const NotiRouter=require("./routes/notification")
 
 //connect db with mongoose
 mongoose.connect(process.env.MONGO).then(()=>{
@@ -52,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet())
 // app.use(morgan("common"))
 //middleware router
+app.use("/api/notification",NotiRouter)
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
 app.use("/api/post",postRouter)
@@ -79,6 +80,7 @@ const server=app.listen(8000,()=>{
 //web socket
 const User=require("./models/User")
 const SocketInfo=require("./models/Socket")
+const Noti =require("./models/Notification")
 
 const io=require("socket.io")(server,{
   cors:{
@@ -157,20 +159,17 @@ io.on("connection",(socket)=>{
   })
 
   socket.on('duasignal', async(userid)=>{
-    console.log("duasignal");
     const id=await getUser(userid)
     io.to(id).emit('laysignal')
   })
 
 
   socket.on('ne',async({signal,userid})=>{
-    console.log("ne");
     const id= await getUser(userid)
     io.to(id).emit('guisignal',signal)
   })
 
   socket.on('endedCall',async({userCall1,userCall2})=>{
-    console.log("end");
     const id1=await getUser(userCall1)
     const id2= await getUser(userCall2)
     io.to(id1).to(id2).emit("end")
@@ -179,24 +178,62 @@ io.on("connection",(socket)=>{
 
   socket.on('answerCall',async({signal,userCallId})=>{
    try {
-     console.log("chapnhan");
      const SocketUserCallId= await getUser(userCallId)
-     console.log(SocketUserCallId);
     io.to(SocketUserCallId).emit('acceptCall',signal)
    } catch (error) {
-    console.log("loi tai day");
     console.log(error);
    }
-    
-
   })
 
 
 
-    // when connect
-    // console.log("A user connected");
+  socket.on('likePost',async({userFriendId,userId,userName,linkBlog,message})=>{
+    try {
+      const socketinfor=await SocketInfo.findOne({userId:userFriendId})
+      
+      const user=await User.findById(userFriendId)
+      user.newNotification=true
+      await user.save()
 
-    //take userId and SocketIo from user
+      await Noti.create({
+        userNameToast:userName,
+        userIdToast:userId,
+        userId:userFriendId,
+        linkBlog:linkBlog,
+        message:message
+      })
+      
+      
+      if(socketinfor){          
+        io.to(socketinfor.socketId).emit("newToast")
+      }else{
+        return
+      }
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+
+  socket.on('daxem',async()=>{
+   try {
+    const socketinfo=await SocketInfo.findOne({socketId:socket.id})
+
+    const user=await User.findById(socketinfo.userId)
+
+    user.newNotification=false 
+    await user.save()
+
+   } catch (error) {
+    console.log(error);
+   }
+  })
+
+
+
+  
   socket.on('addUser',async(userId)=>{
     try {
       await addUser(userId,socket.id)

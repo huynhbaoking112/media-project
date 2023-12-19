@@ -16,10 +16,10 @@ import { FaComments } from "react-icons/fa";
 import { FaShare } from "react-icons/fa";
 import Modal from "react-modal";
 import { FcShare } from "react-icons/fc";
-import { io } from "socket.io-client";
 
 
 const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
+  const socket=useSelector((state)=>state.auth.socket)
   const userCurrent = useSelector((state) => state.auth.user);
   const [like, setLike] = useState(likes.length);
   const [isLike, setIsLike] = useState(false);
@@ -100,6 +100,8 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
   const HandleLike = async () => {
     try {
       
+    
+      socket.emit("likePost",{userFriendId:user?._id,userId:userCurrent?._id,userName:userCurrent?.username,linkBlog:`/post/${_id}`,message:`${userCurrent?.username} vừa thích bài viết của bạn❤️`})
 
 
       const res = await axios.patch(
@@ -132,7 +134,7 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
           />
         </Link>
         <div className="flex flex-col ml-[8px]">
-          <Link to={"/userprofile/" + _id}>
+          <Link to={"/userprofile/" + user?._id}>
             <p className="  font-medium">{user?.username}</p>
           </Link>
           <p className="font-thin">{format(createdAt)}</p>
