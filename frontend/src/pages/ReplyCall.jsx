@@ -7,10 +7,9 @@ import { io } from "socket.io-client";
 import Peer from "simple-peer";
 import { useSelector } from "react-redux";
 
-const socket = io("ws://localhost:8000");
 
 const ReplyCall = () => {
-
+const socket=useSelector((state)=>state.auth.socket)
     const [callSuccess,setCallSuccess]=useState(false)
   const user = useSelector((state) => state.auth.user);
   const [stream, setStream] = useState();

@@ -5,10 +5,13 @@ import axios from 'axios'
 import Sidebar from './Sidebar'
 import Rightbar from './Rightbar'
 import { useSelector,useDispatch } from 'react-redux'
-import { setAllTimeLine } from '../StoreState/userSlice'
+import { addSocket, setAllTimeLine } from '../StoreState/userSlice'
+import { io } from "socket.io-client";
+
+
 
 const Feed = () => {
-
+  
   const dispatch=useDispatch()
   const user=useSelector((state)=>state.auth.user)
   const timeline=useSelector((state)=>state.auth.allTimeLine)
@@ -27,6 +30,9 @@ const Feed = () => {
   }
 
   useEffect(()=>{
+    const socket=io("ws://localhost:8000");
+    dispatch(addSocket(socket))
+
     fetchDataPost()
   },[])
 

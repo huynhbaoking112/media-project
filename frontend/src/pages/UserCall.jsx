@@ -8,9 +8,9 @@ import Peer from "simple-peer"
 import { useSelector } from 'react-redux';
 
 
-const socket=io("ws://localhost:8000")
 
 const UserCall = () => {
+  const socket=useSelector((state)=>state.auth.socket)
     const user=useSelector((state)=>state.auth.user)
     const [stream,setStream]=useState(null)
     const {userid}=useParams()

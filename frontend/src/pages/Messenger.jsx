@@ -20,7 +20,7 @@ import { FcVideoCall } from "react-icons/fc";
 const Messenger = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-
+  const socket=useSelector((state)=>state.auth.socket)
   const [allTheConversation, setAllTheConversation] = useState([]);
   const [currentConversation, setCurrentConversation] = useState();
   const [content, setContent] = useState();
@@ -35,16 +35,14 @@ const Messenger = () => {
   const [inforUserCall,setInForUserCall]=useState()
  
 
-  //socketio-client
-  const socket = useRef();
+
 
   
   useEffect(() => {
-    socket.current = io("ws://localhost:8000");
 
 
 
-    socket.current.on("getMess", (e) => {
+    socket.on("getMess", (e) => {
       setArrivalMess({
         sender: e.sendUser,
         text: e.text,
@@ -60,14 +58,14 @@ const Messenger = () => {
   }, [arrivalMess, currentConversation]);
 
   useEffect(() => {
-    socket.current.emit("addUser", user?._id);
-    socket.current.on("getUsers", (users) => {
+    socket.emit("addUser", user?._id);
+    socket.on("getUsers", (users) => {
       const mang = users.filter((e) => user.friends.includes(e.userId));
       setAllUserOnline(mang);
     });
     
     //setcuocgoiden
-    socket.current.on("callUser",({signal,userId,username})=>{
+    socket.on("callUser",({signal,userId,username})=>{
       setInForUserCall({userId,username})
       setCalled(true)
     })
@@ -154,7 +152,7 @@ const Messenger = () => {
 
       setAllChat([...allChat, res.data.message]);
       setContent("");
-      socket.current.emit("sendMess", {
+      socket.emit("sendMess", {
         sendUser: user?._id,
         receiverId: friendChat?._id,
         text: content,
@@ -197,7 +195,7 @@ const Messenger = () => {
   }
 
   const handleNo=()=>{
-    socket.current.emit('CancelCall',inforUserCall?.userId)
+    socket.emit('CancelCall',inforUserCall?.userId)
     setCalled(false)
     setInForUserCall(null)
 

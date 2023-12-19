@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import anh from "../asset/user2.jpg";
 import axios from "axios";
@@ -16,6 +16,8 @@ import { FaComments } from "react-icons/fa";
 import { FaShare } from "react-icons/fa";
 import Modal from "react-modal";
 import { FcShare } from "react-icons/fc";
+import { io } from "socket.io-client";
+
 
 const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
   const userCurrent = useSelector((state) => state.auth.user);
@@ -93,8 +95,13 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
     fetchTheCommentWithPost();
   }, []);
 
+  
+
   const HandleLike = async () => {
     try {
+      
+
+
       const res = await axios.patch(
         "http://localhost:8000/api/post/like/" + _id,
         {

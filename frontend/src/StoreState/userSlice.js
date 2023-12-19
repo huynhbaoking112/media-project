@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState ={
     user:{},
-    allTimeLine:[]
+    allTimeLine:[],
+    socket:{},
 }
 
 
@@ -30,10 +31,13 @@ export const userSlice=createSlice({
         sharePost:(state,action)=>{
             state.allTimeLine.unshift(action.payload)
             state.allTimeLine.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))
+        },
+        addSocket:(state,action)=>{
+            state.socket=action.payload
         }
     }
 })
 
-export const {login,logout,unfollow,following,setAllTimeLine,sharePost}=userSlice.actions
+export const {login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
 
 export default userSlice.reducer

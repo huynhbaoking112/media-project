@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import anh from "../asset/gift.png";
 import quangcao from "../asset/cat.jpg";
 import { useSelector } from "react-redux";
-import {io} from "socket.io-client"
 import UserOnlineOnHomePage from "./UserOnlineOnHomePage";
 import ChatInHome from "./ChatInHome";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,7 +15,7 @@ import { FcVideoCall } from "react-icons/fc";
 
 const Rightbar = () => {
   const navigate = useNavigate();
-  const socket=useRef()
+  const socket=useSelector((state)=>state.auth.socket)
   const [allUserOnline,setAllUserOnline]=useState([])
   const user=useSelector((state)=>state.auth.user)
   const [userClick,setUserClick]=useState(null)
@@ -32,17 +31,18 @@ const Rightbar = () => {
 // console.log(user);
 
  useEffect(()=>{
-    socket.current=io("ws://localhost:8000")
-    socket.current.emit('addUser',user._id)
-    socket.current.on("callUser",({signal,userId,username})=>{
+   if(Object.keys(socket).length!=0){
+    socket.emit('addUser',user._id)
+    socket.on("callUser",({signal,userId,username})=>{
       setInForUserCall({userId,username})
       setCalled(true)
     })
-    socket.current.on('getUsers',(users)=>{
+    socket.on('getUsers',(users)=>{
       const allFriendUserOnline=users.filter((e)=>user.friends.includes(e.userId))
         setAllUserOnline(allFriendUserOnline)
     })
- },[])
+   }
+ },[socket])
 
  const HandleClickUser=(e)=>{
   if(userClick){
@@ -57,7 +57,7 @@ const Rightbar = () => {
 }
 
 const handleNo=()=>{
-  socket.current.emit('CancelCall',inforUserCall?.userId)
+  socket.emit('CancelCall',inforUserCall?.userId)
   setCalled(false)
   setInForUserCall(null)
 
