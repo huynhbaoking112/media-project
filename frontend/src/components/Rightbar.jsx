@@ -27,8 +27,6 @@ const Rightbar = () => {
   }
   
 
-// console.log(allUserOnline);
-// console.log(user);
 
  useEffect(()=>{
    if(Object.keys(socket).length!=0){

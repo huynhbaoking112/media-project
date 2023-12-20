@@ -40,8 +40,6 @@ const Messenger = () => {
   
   useEffect(() => {
 
-
-
     socket.on("getMess", (e) => {
       setArrivalMess({
         sender: e.sendUser,

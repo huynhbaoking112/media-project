@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaCamera } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { IoCall } from "react-icons/io5";
-import { FaMicrophone } from "react-icons/fa";
-import { io } from "socket.io-client";
 import Peer from "simple-peer";
 import { useSelector } from "react-redux";
 
@@ -20,14 +17,13 @@ const socket=useSelector((state)=>state.auth.socket)
 
   const currentCamera = useRef();
   const friendCamera = useRef();
- 
+ const currentPeer=useRef()
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
       // setStream(stream);
       // stream.current=stream
       currentCamera.current.srcObject = stream;
-      socket.emit("addUser", user._id);
       socket.on("guisignal", (signal) => {
         // setSignalCall(signal);
         const peer = new Peer({ initiator: false, trickle: false, stream });
@@ -44,8 +40,10 @@ const socket=useSelector((state)=>state.auth.socket)
         
         peer.signal(signal)
         setCallSuccess(true)
+        currentPeer.current=peer
       });
       socket.on("end", () => {
+        // currentPeer?.current.destroy()
         navigate("/");
         friendCamera.current = undefined;
         currentCamera.current=undefined
@@ -57,30 +55,11 @@ const socket=useSelector((state)=>state.auth.socket)
    
   }, []);
 
-  // useEffect(() => {
-  //   if (signalCall ) {
-   
-  //     const peer = new Peer({ initiator: false, trickle: false, stream });
-
-  //     peer.on("signal", (data) => {
-   
-  //       socket.emit("answerCall", { signal: data, userCallId: userid });
-  //     });
-
-  //     peer.on("stream", (stream) => {
-      
-  //       friendCamera.current.srcObject = stream;
-  //     });
-
-  //     peer.signal(signalCall)
-  //     setCallSuccess(true)
-   
-  //   }
-  // }, [stream]);
-
 
   const HandleEndCall = () => {
+
     socket.emit("endedCall", { userCall1: userid, userCall2: user._id });
+    // currentPeer?.current.destroy()
   };
 
 

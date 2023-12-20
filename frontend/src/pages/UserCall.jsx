@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaCamera } from "react-icons/fa";
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoCall } from "react-icons/io5";
-import { FaMicrophone } from "react-icons/fa";
-import { io } from "socket.io-client";
 import Peer from "simple-peer"
 import { useSelector } from 'react-redux';
 
@@ -20,17 +17,15 @@ const UserCall = () => {
     const currentCamera=useRef()
     const friendCamera=useRef()
     const [callSuccess,setCallSuccess]=useState(false)
-  
+    const currentPeer=useRef()
 
 
   useEffect(()=>{
     navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
-          
       setStream(stream)
       currentCamera.current.srcObject=stream
      
   })
-    socket.emit('addUser',user._id)
     socket.on('laysignal',()=>{
       
       socket.emit('ne',{signal:signal.current,userid})
@@ -50,29 +45,20 @@ const UserCall = () => {
 
     useEffect(()=>{
     
-        
-
-        
        if(stream){
         const peer=new Peer({initiator:true,trickle:false,stream})
-
         peer.on("signal",(data)=>{
-          
           signal.current=data
             socket.emit('callUser',({userId:user._id,friendId:userid}))
         })
-        
         peer.on("stream",(stream)=>{
-         
           friendCamera.current.srcObject = stream
         })
-      
-
         socket.on('acceptCall',(signal)=>{
-         
+          // currentPeer?.current.destroy()
           setCallSuccess(true)
-        
             peer.signal(signal)
+            currentPeer.current=peer
 
         })
 
@@ -84,6 +70,7 @@ const UserCall = () => {
 
     const HandleEndCall=()=>{
       socket.emit('endedCall',({userCall1:userid,userCall2:user._id}))
+      // currentPeer?.current.destroy()
     }
 
 
