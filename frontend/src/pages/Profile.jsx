@@ -36,7 +36,7 @@ const Profile = () => {
   const socket=useSelector((state)=>state.auth.socket)
   const [inforUserCall,setInForUserCall]=useState(false)
   const [called,setCalled]=useState(false)
-
+console.log(user);
   //-----------------------callVideo------------------------
   useEffect(()=>{
     if(Object.keys(socket).length!=0){
@@ -309,12 +309,13 @@ const closeModal=()=>{
             </p>
 
             <p className="flex justify-center font-medium">USER FRIENDS</p>
-            <div className=" grid grid-cols-3">
-              <FriendInUser />
-              <FriendInUser />
-              <FriendInUser />
-              <FriendInUser />
-              <FriendInUser />
+            <div className=" grid grid-cols-3 gap-1">
+                  {user?.friends?.map((e)=>{
+                     return <Link to={'/userprofile/'+e} key={e} >
+                          <FriendInUser idFriend={e} />
+                     </Link>
+              
+                  })}
             </div>
           </div>
         </div>

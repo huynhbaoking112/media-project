@@ -7,7 +7,7 @@ import { format } from "timeago.js";
 import { Link } from "react-router-dom";
 import { FcLike } from "react-icons/fc";
 import { AiOutlineHeart } from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -16,9 +16,11 @@ import { FaComments } from "react-icons/fa";
 import { FaShare } from "react-icons/fa";
 import Modal from "react-modal";
 import { FcShare } from "react-icons/fc";
+import { deletePost } from "../StoreState/userSlice";
 
 
 const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
+  const dispatch=useDispatch()
   const socket=useSelector((state)=>state.auth.socket)
   const userCurrent = useSelector((state) => state.auth.user);
   const [like, setLike] = useState(likes.length);
@@ -29,6 +31,22 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
   const [openComment, setOpenComment] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [countShare, setCountShare] = useState(userShare?.length);
+  const [openMore,setOpenMore]=useState(false)
+
+
+  const HandleDeletePost=async()=>{
+    try {
+      await axios.delete("http://localhost:8000/api/post/"+_id,{
+        data:{
+          userId:userCurrent._id
+        }
+      })
+      dispatch(deletePost(_id))
+      setOpenMore(false)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const HandleIncrementComment = () => {
     setAllCommentReply((e) => e + 1);
@@ -139,7 +157,14 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
           </Link>
           <p className="font-thin">{format(createdAt)}</p>
         </div>
-        <MoreVertIcon className="ml-auto" />
+      {userCurrent._id==user?._id&&<div className="ml-auto hover:cursor-pointer relative " >
+       <MoreVertIcon className="" onClick={()=>{setOpenMore(!openMore)}} />
+           {openMore&& <div className="absolute top-7 px-2 py-2 right-0 bg-slate-200 rounded-md" >
+                <div className="font-[700] text-red-500 hover:scale-105 duration-300" onClick={HandleDeletePost} >Delete</div>
+                
+            </div>}
+         </div>}
+
       </div>
       {desc && <p className="hover:cursor-pointer">{desc}</p>}
       {img && (

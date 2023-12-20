@@ -34,10 +34,13 @@ export const userSlice=createSlice({
         },
         addSocket:(state,action)=>{
             state.socket=action.payload
+        },
+        deletePost:(state,action)=>{
+            state.allTimeLine=state.allTimeLine.filter((e)=>e._id!=action.payload)
         }
     }
 })
 
-export const {login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
+export const {deletePost,login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
 
 export default userSlice.reducer
