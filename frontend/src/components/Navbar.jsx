@@ -18,6 +18,7 @@ const Navbar = () => {
   const [newNoti,setNewNoti]=useState(user?.newNotification)
   const [openNoti,setOpenNoti]=useState(false)
   const [allNoti,setAllNoti]=useState([])
+  const [newMess,setNewMess]=useState(user?.newMess)
   const dispatch=useDispatch()
   const navigate=useNavigate()
   const HandleLogOut=()=>{
@@ -56,18 +57,24 @@ const Navbar = () => {
   }
 
   useEffect(()=>{
-    console.log(socket);
     if(Object.keys(socket).length!=0){
       socket.on('newToast',()=>{
-        console.log("king");
         setNewNoti(true)
+      })
+      socket.on('haveNewMess',()=>{
+          setNewMess(true)
       })
     }
   },[socket])
 
+  const HandleMess=async()=>{
+    setNewMess(false)
+    socket.emit('danhan',{userId:user._id})
+  }
+
 
   return (
-    <div className="bg-blue-500 h-[60px] flex items-center justify-between px-4 fixed top-0 w-full  z-50 ">
+    <div className="bg-gray-900 h-[60px] flex items-center justify-between px-4 fixed top-0 w-full  z-50 ">
       <div className="">
         <p className="font-bold text-2xl bg-gradient-to-r from-[#ffe259] to-[#ffa751] text-transparent bg-clip-text hover:cursor-pointer font-king ">
           <Link to="/">TECHSOCIAL</Link>
@@ -81,6 +88,11 @@ const Navbar = () => {
             placeholder="Search for friend, post or video"
             value={searchValue}
             onChange={(e)=>{setSearchValue(e.target.value)}}
+            onKeyDown={(e)=>{
+              if(e.code=='Enter'){
+                HandleSearch()
+              }
+            }}
           />
         </div>
         <p className="text-white hover:cursor-pointer text-lg">
@@ -99,11 +111,13 @@ const Navbar = () => {
         </div>
         <div className="relative">
           <Link to="/messenger" >
+          <div onClick={HandleMess} >
           <ChatIcon className="text-white hover:cursor-pointer" />
-          </Link>
-          <div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
-            <span className="text-white">1</span>
           </div>
+          </Link>
+          {newMess&&<div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
+            <span className="text-white">1</span>
+          </div>}
         </div>
         <div className="relative" onClick={HandleNoti} >
           <NotificationsActiveIcon className="text-white hover:cursor-pointer" />

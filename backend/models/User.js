@@ -89,6 +89,10 @@ const UserSchema=new mongoose.Schema({
         newNotification:{
             type:Boolean,
             defaul:false
+        },
+        newMess:{
+            type:Boolean,
+            default:false
         }
 
 },{timestamps:true})

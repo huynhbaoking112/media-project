@@ -100,9 +100,8 @@ const closeModal=()=>{
         <div className="flex items-center gap-2">
           <img src={anh} className="object-cover w-[50px] h-[50px]" />
           <p>
-            <span className="font-medium">Pola Foster</span> and{" "}
-            <span className="font-medium">3 other friends</span> have a birthday
-            today
+            <span className="font-medium">TECHSOCIAL</span> {" "}
+            <span className="font-[400]">Chúc bạn một mùa giáng sinh  <span className="font-medium">2023</span> {" "} an lành</span> 
           </p>
         </div>
         <img

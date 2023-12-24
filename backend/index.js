@@ -246,17 +246,29 @@ io.on("connection",(socket)=>{
   })
 
 
+  
 
 
   //when sendMesse
   socket.on('sendMess',async({sendUser,receiverId,text})=>{
-  
+    const user=await User.findById(receiverId)
+    user.newMess=true
+    await user.save()
+
     const id=await getUser(receiverId)
     io.to(id).emit('getMess',{
-        sendUser,
-        receiverId,
-        text
+      sendUser,
+      receiverId,
+      text
     })
+    
+    io.to(id).emit('haveNewMess')
+  })
+
+  socket.on('danhan',async({userId})=>{
+    const user=await User.findById(userId)
+    user.newMess=false
+    await user.save()
   })
 
 
