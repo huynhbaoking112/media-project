@@ -51,10 +51,16 @@ export const userSlice=createSlice({
         duocchapnhan:(state,action)=>{
             state.user.waitAcceptUser=state.user.waitAcceptUser.filter((e)=>e.id!=action.payload)
             state.user.friends.push(action.payload)
+        },
+        tuchoiketban:(state,action)=>{
+            state.user.acceptUser=state.user.acceptUser.filter((e)=>e.id!=action.payload)
+        },
+        xulikhongchapnhan:(state,action)=>{
+            state.user.waitAcceptUser=  state.user.waitAcceptUser.filter((e)=>e.id!=action.payload)
         }
     }
 })
 
-export const {duocchapnhan,chapnhanketban,huycho,chochapnhan,deletePost,login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
+export const {xulikhongchapnhan,tuchoiketban,duocchapnhan,chapnhanketban,huycho,chochapnhan,deletePost,login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
 
 export default userSlice.reducer

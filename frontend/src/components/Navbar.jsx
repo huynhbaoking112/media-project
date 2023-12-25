@@ -11,7 +11,7 @@ import { logout } from "../StoreState/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NotiFriend from "./NotiFriend";
-import { duocchapnhan } from "../StoreState/userSlice";
+import { duocchapnhan,xulikhongchapnhan } from "../StoreState/userSlice";
 const Navbar = () => {
   const socket=useSelector((state)=>state.auth.socket)
   const user = useSelector((state) => state.auth.user);
@@ -26,7 +26,8 @@ const Navbar = () => {
   const [allFriend,setAllFriend]=useState([])
   const dispatch=useDispatch()
   const navigate=useNavigate()
-  console.log(allFriend);
+  
+
 const HandleFriend=async()=>{
   setOpenFriend(!openFriend)
   setNewFriend(false)
@@ -93,6 +94,9 @@ try {
       })
       socket.on("dachapnhan",({userId})=>{
         dispatch(duocchapnhan(userId))
+      })
+      socket.on("xulikhongchapnhan",({userId})=>{
+        dispatch(xulikhongchapnhan(userId))
       })
     }
   },[socket])

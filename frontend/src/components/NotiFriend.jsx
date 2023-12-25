@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { chapnhanketban } from '../StoreState/userSlice'
+import { chapnhanketban,tuchoiketban } from '../StoreState/userSlice'
 import axios from 'axios'
 import anh from "../asset/user2.jpg"
 import "react-toastify/dist/ReactToastify.css";
@@ -24,6 +24,15 @@ const NotiFriend = ({id,HandleSetOpenFriend}) => {
         }
     }
 
+    const HandleNotAccept=()=>{
+        //xu li ca nhan
+        dispatch(tuchoiketban(user?._id))
+        HandleSetOpenFriend(false)
+        //xu li database
+        socket.emit("khongchapnhan",{userId:currentUser._id,friendId:user?._id})
+        //xu li friend
+    }
+
     const HandleAccept=()=>{
         socket.emit("chapnhanketban",{userId:currentUser._id,userFriendId:user?._id})
         dispatch(chapnhanketban(user?._id))
@@ -44,7 +53,7 @@ const NotiFriend = ({id,HandleSetOpenFriend}) => {
             <p><span className='font-[600]'>{user?.username}</span> muốn kết bạn🙋‍♂️</p>
             <div className='flex w-full items-center justify-start gap-1' >
             <div className='rounded-sm bg-gray-600 text-white px-2 py-[2px] hover:cursor-pointer hover:scale-105 duration-300' onClick={HandleAccept} >Chấp nhận </div>
-            <div className='rounded-sm bg-gray-600 text-white px-2 py-[2px] hover:cursor-pointer hover:scale-105 duration-300'>Từ chối</div>
+            <div className='rounded-sm bg-gray-600 text-white px-2 py-[2px] hover:cursor-pointer hover:scale-105 duration-300' onClick={HandleNotAccept} >Từ chối</div>
             </div>
         </div>
         <ToastContainer/>

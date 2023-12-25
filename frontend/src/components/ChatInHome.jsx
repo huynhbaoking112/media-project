@@ -43,6 +43,7 @@ const ChatInHome = ({ userId ,UnUserClick}) => {
           FriendId: userId,
         }
       );
+      
       setAllChat(res.data.message);
       setCurrentConversation(res.data.message[0].conversationId);
     } catch (error) {

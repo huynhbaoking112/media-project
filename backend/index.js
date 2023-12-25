@@ -138,6 +138,18 @@ io.on("connection",(socket)=>{
     }
   })
 
+  socket.on("khongchapnhan",async({userId,friendId})=>{
+    let user=await User.findById(userId)
+    let friend=await User.findById(friendId)
+    user.acceptUser=user.acceptUser.filter((e)=>e!=friendId)
+    friend.waitAcceptUser=friend.waitAcceptUser.filter((e)=>e!=userId)
+    await user.save()
+    await friend.save()
+
+    const id=await getUser(friendId)
+    io.to(id).emit('xulikhongchapnhan',{userId})
+  })
+
   socket.on("ketban",async({userId,userFriendId,name})=>{
     try {
       
