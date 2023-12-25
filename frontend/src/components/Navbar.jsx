@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { logout } from "../StoreState/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import NotiFriend from "./NotiFriend";
+import { duocchapnhan } from "../StoreState/userSlice";
 const Navbar = () => {
   const socket=useSelector((state)=>state.auth.socket)
   const user = useSelector((state) => state.auth.user);
@@ -19,8 +21,26 @@ const Navbar = () => {
   const [openNoti,setOpenNoti]=useState(false)
   const [allNoti,setAllNoti]=useState([])
   const [newMess,setNewMess]=useState(user?.newMess)
+  const [newFriend,setNewFriend]=useState(user?.newFriend)
+  const [openFriend,setOpenFriend]=useState(false)
+  const [allFriend,setAllFriend]=useState([])
   const dispatch=useDispatch()
   const navigate=useNavigate()
+  console.log(allFriend);
+const HandleFriend=async()=>{
+  setOpenFriend(!openFriend)
+  setNewFriend(false)
+  socket.emit("daxemban",{userId:user._id})
+try {
+  const res=await axios.get("http://localhost:8000/api/user?userId=" + user._id)
+
+  setAllFriend(res.data.user.acceptUser)
+
+} catch (error) {
+  console.log(error);
+}
+}
+
   const HandleLogOut=()=>{
     dispatch(logout())
     setOpenMenu(false)
@@ -56,6 +76,10 @@ const Navbar = () => {
 
   }
 
+  const HandleSetOpenFriend=(test)=>{
+    return setOpenFriend(test)
+  }
+
   useEffect(()=>{
     if(Object.keys(socket).length!=0){
       socket.on('newToast',()=>{
@@ -63,6 +87,12 @@ const Navbar = () => {
       })
       socket.on('haveNewMess',()=>{
           setNewMess(true)
+      })
+      socket.on("loimoiketbanmoi",({name,userId})=>{
+        setNewFriend(true)
+      })
+      socket.on("dachapnhan",({userId})=>{
+        dispatch(duocchapnhan(userId))
       })
     }
   },[socket])
@@ -95,19 +125,23 @@ const Navbar = () => {
             }}
           />
         </div>
-        <p className="text-white hover:cursor-pointer text-lg">
-          <Link to="/">Homepage</Link>
-        </p>
-        <p className="text-white hover:cursor-pointer text-lg">
-          <Link to={"/userprofile/" + user._id}>Timeline</Link>
-        </p>
+   =
       </div>
       <div className="flex items-center gap-[20px]">
-        <div className="relative">
+        <div className="relative" onClick={HandleFriend} >
           <PersonIcon className="text-white hover:cursor-pointer" />
-         <div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
+        { newFriend&&<div className="rounded-full absolute top-[-15px] right-[-12px]  bg-red-500 w-[20px] h-[20px] flex items-center justify-center">
             <span className="text-white">1</span>
-          </div>
+          </div>}
+          { openFriend&&<div className="flex flex-col bg-slate-100 border-[1px] border-black w-[350px] absolute top-7 right-0 h-[300px]" >
+              <div className="h-full w-full overflow-y-auto flex flex-col gap-2 py-2" >
+            {allFriend.map((e)=>{
+              return  <div key={e} className="h-[80px] w-full">
+                  <NotiFriend id={e} HandleSetOpenFriend={HandleSetOpenFriend}/>
+              </div>
+            })}
+              </div>
+          </div>}
         </div>
         <div className="relative">
           <Link to="/messenger" >

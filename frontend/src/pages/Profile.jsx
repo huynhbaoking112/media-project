@@ -22,11 +22,12 @@ import Modal from "react-modal";
 import { LuPhoneCall } from "react-icons/lu";
 import { FcEndCall } from "react-icons/fc";
 import { FcVideoCall } from "react-icons/fc";
+import { chochapnhan,huycho,chapnhanketban } from "../StoreState/userSlice";
 
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [friend, setFriend] = useState(false);
+  const [friend, setFriend] = useState(4);
   const [follow, setFollow] = useState(false);
   const params = useParams();
   const [user, setUser] = useState({});
@@ -36,7 +37,7 @@ const Profile = () => {
   const socket=useSelector((state)=>state.auth.socket)
   const [inforUserCall,setInForUserCall]=useState(false)
   const [called,setCalled]=useState(false)
-console.log(user);
+
   //-----------------------callVideo------------------------
   useEffect(()=>{
     if(Object.keys(socket).length!=0){
@@ -73,9 +74,26 @@ const closeModal=()=>{
 
 
 
-  const HandleAddFriend = async (e) => {
-    e.preventDefault();
+  const HandleFriend = async (e) => {
+    e.preventDefault()
+    if(friend==4){
+      socket.emit("ketban",{userId:currentUser._id,userFriendId:params.userId,name:user?.username})
+      setFriend(3)
+      dispatch(chochapnhan(params.userId))
+    }else if(friend==3){
+      socket.emit("huychoketban",{userId:currentUser._id,userFriendId:params.userId})
+      setFriend(4)
+      dispatch(huycho(params.userId))
+    }else if(friend==2){
+      socket.emit("chapnhanketban",{userId:currentUser._id,userFriendId:params.userId})
+      setFriend(1)
+      dispatch(chapnhanketban(params.userId))
+    } 
+
   };
+
+
+  //follow
   const HandleFollow = async (e) => {
     e.preventDefault();
     try {
@@ -110,7 +128,7 @@ const closeModal=()=>{
       });
     }
   };
-
+console.log(currentUser);
   const fetchProfile = async () => {
     try {
       const res = await axios.get(
@@ -127,8 +145,12 @@ const closeModal=()=>{
         ? setFollow(true)
         : setFollow(false);
       currentUser.friends.includes(params.userId)
-        ? setFriend(true)
-        : setFriend(false);
+        ? setFriend(1)//bạn bè
+        : currentUser.acceptUser.includes(params.userId)
+        ?setFriend(2)//chấp nhận kết bạn
+        :currentUser.waitAcceptUser.includes(params.userId)
+        ?setFriend(3)//chờ chấp nhận
+        :setFriend(4);//kết bạn
     } catch (error) {
       setErr(true);
     }
@@ -144,6 +166,8 @@ const closeModal=()=>{
       setErr(true);
     }
   };
+
+  
   useEffect(() => {
     fetchUserProfile();
     fetchProfile();
@@ -252,21 +276,21 @@ const closeModal=()=>{
           <div className="w-full flex flex-col gap-2 sticky top-[70px]">
             {currentUser._id != params.userId && (
               <div className="flex justify-center gap-3 w-full">
-                {friend ? (
-                  <button className="flex group w-[40%] justify-center items-center gap-2 bg-blue-500 rounded-lg py-2 px-4 text-white font-medium hover:scale-105 duration-300">
-                    Friend{" "}
+                {/* {friend ? ( */}
+                  <button onClick={HandleFriend} className="flex group w-[40%] justify-center items-center gap-2 bg-blue-500 rounded-lg py-2 px-4 text-white font-medium hover:scale-105 duration-300">
+                    {friend==1?'Friend':friend==2?'Accept Friend':friend==3?'WaitAccept':'AddFriend'}
                     <span className="group-hover:animate-bounce">
-                      <FaUserFriends />
+                     {friend==1? <FaUserFriends />:friend==4&&<AiOutlineUsergroupAdd size={20} />}
                     </span>{" "}
                   </button>
-                ) : (
+                {/* ) : (
                   <button className="flex group w-[40%] justify-center items-center gap-2 bg-blue-500 rounded-lg py-2 px-4 text-white font-medium hover:scale-105 duration-300">
                     AddFriend{" "}
                     <span className="group-hover:animate-bounce">
                       <AiOutlineUsergroupAdd size={20} />
                     </span>{" "}
                   </button>
-                )}
+                )} */}
                 {follow ? (
                   <button
                     onClick={HandleFollow}

@@ -37,10 +37,24 @@ export const userSlice=createSlice({
         },
         deletePost:(state,action)=>{
             state.allTimeLine=state.allTimeLine.filter((e)=>e._id!=action.payload)
+        },
+        chochapnhan:(state,action)=>{
+            state.user.waitAcceptUser.push(action.payload)
+        },
+        huycho:(state,action)=>{
+            state.user.waitAcceptUser=state.user.waitAcceptUser.filter((e)=>e!=action.payload)
+        },
+        chapnhanketban:(state,action)=>{
+            state.user.acceptUser=state.user.acceptUser.filter((e)=>e.id!=action.payload)
+            state.user.friends.push(action.payload)
+        },
+        duocchapnhan:(state,action)=>{
+            state.user.waitAcceptUser=state.user.waitAcceptUser.filter((e)=>e.id!=action.payload)
+            state.user.friends.push(action.payload)
         }
     }
 })
 
-export const {deletePost,login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
+export const {duocchapnhan,chapnhanketban,huycho,chochapnhan,deletePost,login,logout,unfollow,following,setAllTimeLine,sharePost,addSocket}=userSlice.actions
 
 export default userSlice.reducer

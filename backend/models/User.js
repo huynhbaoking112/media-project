@@ -93,6 +93,18 @@ const UserSchema=new mongoose.Schema({
         newMess:{
             type:Boolean,
             default:false
+        },
+        acceptUser:{
+            type:Array,
+            default:[]
+        },
+        waitAcceptUser:{
+            type:Array,
+            default:[]
+        },
+        newFriend:{
+            type:Boolean,
+            default:false
         }
 
 },{timestamps:true})

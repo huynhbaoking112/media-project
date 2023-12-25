@@ -87,19 +87,12 @@ const io=require("socket.io")(server,{
       origin:"http://localhost:3000"
   }
 })
-// let users=[]
 
 
 const addUser=async(userId,socketId)=>{
   try {
-    // const a=users.findIndex((e)=>e.userId==userId)
-    // if(a==-1){
-    //     users.push({userId,socketId})
-    // }else{
-    //     users[a].socketId=socketId
-    // }
+   
     const user=await SocketInfo.findOne({userId})
-    console.log(user);
     if(!user){
       await SocketInfo.create({userId,socketId})
     }else{
@@ -112,7 +105,6 @@ const addUser=async(userId,socketId)=>{
   }
 }
 const removeUser=async(socketId)=>{
-    //  users=users.filter((e)=>e.socketId!=socketId)
   try {
     await SocketInfo.findOneAndDelete({socketId})
   } catch (error) {
@@ -123,11 +115,7 @@ const removeUser=async(socketId)=>{
 }
 
 const getUser=async(userId)=>{
-  // for(let element of users){
-  //   if(element.userId==userIds){
-  //     return element.socketId
-  //   }
-  // }
+ 
     try {
       const user=await SocketInfo.findOne({userId})
       return user.socketId
@@ -138,13 +126,74 @@ const getUser=async(userId)=>{
 
 io.on("connection",(socket)=>{
 
+  //FriendHandle
 
+  socket.on("daxemban",async({userId})=>{
+    try {
+      const user=await User.findById(userId)
+      user.newFriend=false
+      await user.save()
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+  socket.on("ketban",async({userId,userFriendId,name})=>{
+    try {
+      
+      let user=await User.findById(userId)
+      let friend=await User.findById(userFriendId)
+      user.waitAcceptUser.unshift(userFriendId)
+      friend.acceptUser.unshift(userId)
+      friend.newFriend=true
+      await user.save()
+      await friend.save()
+
+      const id=await getUser(userFriendId)
+      io.to(id).emit('loimoiketbanmoi',{name,userId})
+
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+  socket.on('huychoketban',async({userId,userFriendId})=>{
+    try {
+      let user=await User.findById(userId)
+      let friend=await User.findById(userFriendId)
+      user.waitAcceptUser=user.waitAcceptUser.filter((e)=>e!=userFriendId)
+      friend.acceptUser=friend.acceptUser.filter((e)=>e!=userId)
+      await user.save()
+      await friend.save()
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+  
+  socket.on('chapnhanketban',async({userId,userFriendId})=>{
+    try {
+      let user=await User.findById(userId)
+      let friend=await User.findById(userFriendId)
+      user.acceptUser=user.acceptUser.filter((e)=>e!=userFriendId)
+      friend.waitAcceptUser=friend.waitAcceptUser.filter((e)=>e!=userId)
+      user.friends.push(userFriendId)
+      friend.friends.push(userId)
+      await user.save()
+      await friend.save()
+      const id=await getUser(userFriendId)
+      io.to(id).emit("dachapnhan",{userId})
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+
+
+//-------------------------------------------------------
   socket.on('callUser',async({userId,friendId})=>{
         try {   
           const SocketFriendId=await getUser(friendId)
-          console.log("----------");
-          console.log(SocketFriendId);
-          console.log("----------");
           const userCall=await User.findById(userId)
            io.to(SocketFriendId).emit('callUser',({userId,username:userCall.username}))
         } catch (error) {
@@ -238,7 +287,6 @@ io.on("connection",(socket)=>{
     try {
       await addUser(userId,socket.id)
       const users=await SocketInfo.find()
-      console.log(users);
       io.emit("getUsers",users)
     } catch (error) {
       console.log(error);
@@ -275,7 +323,6 @@ io.on("connection",(socket)=>{
 //when disconnect
   socket.on('disconnect',async()=>{
      try {
-      console.log("A user disconnect");
       await removeUser(socket.id)
       const users=await SocketInfo.find()
       io.emit("getUsers",users)
