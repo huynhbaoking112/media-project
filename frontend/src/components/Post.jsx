@@ -40,7 +40,11 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
         data:{
           userId:userCurrent._id
         }
-      })
+      },{
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+    })
       dispatch(deletePost(_id))
       setOpenMore(false)
     } catch (error) {
@@ -65,7 +69,12 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
         "http://localhost:8000/api/post/sharePost/" + _id,
         {
           userId: userCurrent._id,
-        }
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+      }
       );
       toast.success("Share post success!", {
         position: toast.POSITION.TOP_RIGHT,
@@ -126,7 +135,11 @@ const Post = ({ desc, likes, img, userId, createdAt, _id, userShare }) => {
         "http://localhost:8000/api/post/like/" + _id,
         {
           userId: userCurrent._id,
-        }
+        },{
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+      }
       );
       setLike(isLike ? like - 1 : like + 1);
 

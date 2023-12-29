@@ -49,6 +49,7 @@ const VerifyPage = () => {
                 const res=await axios.post("http://localhost:8000/api/auth/verify/"+id,{
                         token
                 })
+                localStorage.setItem('token', res.data.token);
                 dispatch(login(res.data.user))
                 navigate("/")
         } catch (error) {

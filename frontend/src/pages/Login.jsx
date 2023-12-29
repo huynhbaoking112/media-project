@@ -25,6 +25,7 @@ const Login = () => {
       });
 
       toast.success("Login success!", { position: toast.POSITION.TOP_RIGHT });
+      localStorage.setItem('token', res.data.token);
       dispatch(login(res.data.user))
       navigate("/")
     } catch (error) {

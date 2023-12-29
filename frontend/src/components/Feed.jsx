@@ -20,7 +20,11 @@ const Feed = () => {
   const fetchDataPost=async()=>{
     try {
        const res=await  axios.post("http://localhost:8000/api/post/allpost/timeline",{
-        userId:user._id
+        userId:user._id,
+       },{
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
     })
     dispatch(setAllTimeLine(res.data.data))
  

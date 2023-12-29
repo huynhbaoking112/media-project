@@ -109,9 +109,6 @@ const HandleAddFriend=async(req,res,next)=>{
 
         
 
-        console.log(req.params.id);
-        console.log(req.body._id);
-
     } catch (error) {
         next(new Error(error.message))
     }

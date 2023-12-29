@@ -17,10 +17,7 @@ router.route("/:id/follower").patch(HandleFollower)
 //unfollow a user
 router.route("/:id/unfollower").patch(HandleUnFollower)
 
-//addfriend
-router.route("/:id/addfriend").patch(HandleAddFriend)
-//unfriend      
-router.route("/:id/unfriend").patch(HandleUnFriend)
+
 
 
 module.exports=router

@@ -1,26 +1,22 @@
 const User = require("../models/User");
 const nodemailer = require('nodemailer');
+const jwt=require("jsonwebtoken")
 
+const createToken=(id)=>{
+  return jwt.sign({ id:id }, 'shhhhh',{expiresIn:1000000000});
+}
 
 const HandleRegister = async (req,res,next) => {
-
   try {
-
     const exist=await User.findOne({email:req.body.email})
    if(exist){
     return next(new Error("Tai khoan da ton  tai"))
    }
-  
     const user= await User.create(req.body)
-    
-
     res.status(201).json({
         status:"Success",
         userId:user._id
     })
-
-
-
   } catch (error) {
     next(new Error(error.message))
   }
@@ -34,8 +30,10 @@ const HandleLogin=async(req,res,next)=>{
         if(!user.verify){
          return next(new Error("cdxm"))
         }
+        const token=createToken(user._id)
         res.status(200).json({
             status:"Success",
+            token,
             user
         })
     
@@ -61,9 +59,11 @@ const  HandleVerify=async(req,res,next)=>{
       }else{
           user.verify=true
           await user.save()
+          const token=createToken(user._id)
         res.status(200).json({
           status:"Success",
           user,
+          token,
           message:"Verify success"
         })
       }

@@ -32,11 +32,10 @@ const HandleUpdatePost=async(req,res,next)=>{
 
 const HandleDeletePost=async(req,res,next)=>{
     try {
-        console.log(req.body.userId);
         const {id}=req.params
         const post=await Post.findById(id)
         if(post.userId!=req.body.userId) throw new Error("You cannot perform this action")
-        const postDelete=await Post.findByIdAndDelete(id)
+        await Post.findByIdAndDelete(id)
         res.status(200).json({
             status:"Success"
         })

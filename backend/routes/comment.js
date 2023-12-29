@@ -1,7 +1,7 @@
 const express=require("express")
 const Router=express.Router()
 const {HandleDeleteCommentReply,HandlePostComment,handlePatchComment,HandlePatchPostComment,HandleDeletePostComment,HandleGetCommentWithPost,HandlePostCommentReply,HandleCommentReply} =require("../controllers/comment")
-
+const {HandleToken}=require("../controllers/handleToken")
 
 //Comment vào một post
 Router.route("/post/:postId")
@@ -14,7 +14,7 @@ Router.route("/post/:postId")
 
 
 // like or unlike comment và sửa comment xóa comment post
-Router.route("/post/comment/:commentId").patch(HandlePatchPostComment).delete(HandleDeletePostComment)
+Router.route("/post/comment/:commentId").patch(HandleToken,HandlePatchPostComment).delete(HandleToken,HandleDeletePostComment)
 
 
 
