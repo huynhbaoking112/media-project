@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const jwt=require("jsonwebtoken")
 
 const createToken=(id)=>{
-  return jwt.sign({ id:id }, 'shhhhh',{expiresIn:1000000000});
+  return jwt.sign({ id:id }, process.env.SECRET,{expiresIn:1000000000});
 }
 
 const HandleRegister = async (req,res,next) => {
